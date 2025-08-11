@@ -3,6 +3,8 @@ import Image from "next/image";
 import postgres from 'postgres';
 import { createClient } from '@supabase/supabase-js'
 
+import D3Example from '../components/D3Example'
+
 export default function Home() {
   const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -33,7 +35,6 @@ export default function Home() {
       sql.end()
     }
   }
- testFetchSongs()
 
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
@@ -54,9 +55,12 @@ export default function Home() {
             </code>
             .
           </li>
+               <D3Example width="200" height="200" />
+
           <li className="tracking-[-.01em]">
             DDR APP
           </li>
+
         </ol>
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
