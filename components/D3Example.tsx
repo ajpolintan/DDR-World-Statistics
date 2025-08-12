@@ -27,6 +27,7 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
         //selects the current component
         const svg = d3.select(ref.current)
 
+        svg.selectAll("*").remove();
         
         const margin = {
             top: 20,
