@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import postgres from 'postgres';
 import { createClient } from '@supabase/supabase-js'
 
@@ -8,37 +7,17 @@ import D3Example from '../components/D3Example'
 export default function Home() {
   const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
-  async function fetchSongs() {
-    const songs = await sql`
-      SELECT
-      "Title", "Steps"
-      FROM ddr_world_songs
-    `
-    return songs
-  }
-  
-  async function testFetchSongs() {
-    try {
-        const songs = await fetchSongs()
-        console.log('Songs fetched:', songs);
-        console.log(songs.length)
 
-        if (songs.length > 0) {
-          console.log("PASSED")
-        } else {
-          console.log("NOT PASSED")
-        }
-      }
-    catch (error) {
-      console.error("Tests Failed", error)
-    } finally {
-      sql.end()
-    }
-  }
 
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+   
+
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+                  
+        <div className="w-full h-auto">
+           <D3Example svgWidth={1000} svgHeight={600} />
+        </div>
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -55,7 +34,6 @@ export default function Home() {
             </code>
             .
           </li>
-               <D3Example width="200" height="200" />
 
           <li className="tracking-[-.01em]">
             DDR APP
