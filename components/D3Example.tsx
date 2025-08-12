@@ -58,7 +58,7 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
 
 
           //Create tooltip: Referenced from D3-Graph Gallery
-          var tooltip = d3.select("body")
+          const tooltip = d3.select("body")
               .attr("class", "tooltip")
               .append("div")
               .style("position", "absolute")
