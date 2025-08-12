@@ -17,7 +17,7 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
   const ref = useRef<SVGSVGElement | null>(null)
   
   useEffect(() => {
-    d3.csv<DDR_SONG>('DDR_WORLD.csv', d3.autoType).then((data) => {
+    d3.csv<DDR_SONG>('/DDR_WORLD.csv', d3.autoType).then((data) => {
         const sorted_jumps = data.sort((a,b) => { return d3.descending(a.Jumps,b.Jumps)}).filter(function(d,i){ return i < 10})
         console.log("TESTING")
         console.log(sorted_jumps)
@@ -58,18 +58,21 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
 
 
           //Create tooltip: Referenced from D3-Graph Gallery
-          const tooltip = d3.select("body")
-              .attr("class", "tooltip")
-              .append("div")
-              .style("position", "absolute")
-              .style("visibility", "hidden")
-              .style("background-color", "black")
-              .style("color", "white")
-              .style("border", "solid")
-              .style("border-width", "1px")
-              .style("border-radius", "5px")
-              .style("padding", "10px")
-              .html("<p>I'm a tooltip written in HTML</p><img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'></img><br>Fancy<br><span style='font-size: 40px;'>Isn't it?</span>");
+          let tooltip: d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown> = d3.select("#tooltip");
+          if (tooltip.empty()) {
+              tooltip = d3.select("body")
+                .attr("class", "tooltip")
+                .append("div")
+                .style("position", "absolute")
+                .style("visibility", "hidden")
+                .style("background-color", "black")
+                .style("color", "white")
+                .style("border", "solid")
+                .style("border-width", "1px")
+                .style("border-radius", "5px")
+                .style("padding", "10px")
+                .html("<p>I'm a tooltip written in HTML</p><img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'></img><br>Fancy<br><span style='font-size: 40px;'>Isn't it?</span>");
+          }
 
           chart
                 .append('g')
@@ -116,7 +119,7 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
               //Create tooltip
               tooltip.style("opacity",1)
                   .style("visibility", "visible")
-                  .style("left", (event.pageX) + "px")
+                  .style("left", (event.pageX + 200) + "px")
                   .style("top",  (event.pageY) + "px")
                   .html("<p> Jumps: " + d.Jumps  + "<br>Title: " + d.Title + "</p>" )
               console.log(d.Title)
