@@ -17,7 +17,7 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
   const ref = useRef<SVGSVGElement | null>(null)
   
   useEffect(() => {
-    d3.csv<DDR_SONG>('/DDR_WORLD.csv', d3.autoType).then((data) => {
+    d3.csv<DDR_SONG>('/DDR_World.csv', d3.autoType).then((data) => {
         const sorted_jumps = data.sort((a,b) => { return d3.descending(a.Jumps,b.Jumps)}).filter(function(d,i){ return i < 10})
         console.log("TESTING")
         console.log(sorted_jumps)
