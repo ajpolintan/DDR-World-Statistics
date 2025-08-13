@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, createRef, useRef} from 'react'
+import { useState, useEffect, createRef, useRef} from 'react'
 import * as d3 from 'd3'
 
 interface D3Props {
@@ -18,12 +18,35 @@ interface DDR_SONG {
 }
 export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
 
+  const [selected, setSelected] = useState("")
   const ref = useRef<SVGSVGElement | null>(null)
   
+  // * Data Changes Depending on What is Clicked
+  const handleClick = (statistic: string) => {
+    switch (statistic) {
+        case "Jumps":
+          setSelected("Jumps")
+          break;
+        case "Crossovers":
+          setSelected("Crossovers")
+          break;
+        case "Steps":
+          setSelected("Steps")
+          break;
+        default:
+          setSelected("Jumps")
+          break;
+      } 
+
+
+  }
+
+
   // * UseEffect Creates the Chart a it's loaded in 
   useEffect(() => {
-    d3.csv<DDR_SONG>('/DDR_World.csv', d3.autoType).then((data) => {
+    console.log(selected)
 
+    d3.csv<DDR_SONG>('/DDR_World.csv', d3.autoType).then((data) => {
 
         const sorted_jumps = data.sort((a,b) => { return d3.descending(a.Jumps,b.Jumps)}).filter(function(d,i){ return i < 10})
         const sorted_steps = data.sort((a,b) => { return d3.descending(a.Steps,b.Steps)}).filter(function(d,i){ return i < 10})
@@ -32,11 +55,6 @@ export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
 
         const songs = d3.group(data, (data) => data.Rating);
       
-        console.log("TESTING")
-        console.log(sorted_jumps)
-        console.log(sorted_jumps[0].Jumps)
-        console.log(sorted_jumps[sorted_jumps.length - 1].Jumps)
-          
         //selects the current component
         const svg = d3.select(ref.current)
 
@@ -48,7 +66,7 @@ export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
             bottom: 50,
             left: 220,
         };
-        
+
         const width = svgWidth - margin.left - margin.right;
         const height = svgHeight - margin.top - margin.bottom;
         const chart = svg
@@ -125,32 +143,65 @@ export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
             .attr('class', 'bar')
             .attr('x', (d) => xScale(0))
             .attr('y', (d) => yScale(d.Title)!)
-            .attr('width', (d) => xScale(d.Crossovers)!)
             .attr('height', yScale.bandwidth())
-            .attr('fill', 'steelblue')
+            .attr('width', 0)
+            .attr('fill', '#800080')
+            .transition()
+            .duration(1000)
+            .attr('width', (d) => xScale(d.Crossovers)!)
+      
+          chart
+            .selectAll('.bar')
             .on("mouseover", function(event, d) {
-              //Create tooltip
-              tooltip.style("opacity",1)
-                  .style("visibility", "visible")
-                  .style("left", (event.pageX + 200) + "px")
-                  .style("top",  (event.pageY) + "px")
-                  .html("<p> Jumps: " + d.Jumps  + "<br>Title: " + d.Title + "</p>" )
-
-              console.log(d.Title)
+                  //Create tooltip
+                  tooltip.style("opacity",1)
+                      .style("visibility", "visible")
+                      .style("left", (event.pageX + 200) + "px")
+                      .style("top",  (event.pageY) + "px")
+                      .html("<p> Jumps: " + d.Jumps  + "<br>Title: " + d.Title + "</p>" )
+                  //Highlight hover
+                  chart.selectAll(".bar")
+                    .transition()
+                    .duration(300) 
+                    .style("fill", "#4B0082")
+                  //Brush other data out
+                  d3.select(this)
+                  .transition()
+                  .duration(300) 
+                  .style("fill", "#800080")
+                  .style("stroke","black")
+                  console.log(d.Title)
             })
             .on("mouseout", function(event, d) { 
-              tooltip.style("visibility", "hidden")
-                  .style("stroke","none")
+                  tooltip.style("visibility", "hidden")
+                      .transition()
+                      .duration(300)     
+                      .style("stroke","none")
+                  chart.selectAll(".bar")
+                      .transition()
+                      .duration(300) 
+                      .style("fill", "#800080")
             })
           
-          })
+
+       
+       
+    })
+
+
+          // * END OF D3
           
 
             
-  },[])
+  },[selected])
 
   return ( 
     <div>
+      <div className='flex gap-4'> 
+        <button className='text-white bg-teal-800 hover:bg-teal-950 px-5 py-2.5' onClick={() => handleClick("Jumps")}> jumps</button>
+        <button className='text-white bg-teal-800  hover:bg-teal-950 px-5 py-2.5' onClick={() => handleClick("Crossovers")}> crossovers</button>
+
+      </div>
       <h1> Highest Number of Jumps</h1>
       <svg width={svgWidth} height={svgHeight} ref={ref} className='w-full h-auto'/>
     </div>

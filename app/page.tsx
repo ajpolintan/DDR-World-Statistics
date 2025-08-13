@@ -1,21 +1,16 @@
 import Image from "next/image";
-import postgres from 'postgres';
-import { createClient } from '@supabase/supabase-js'
-
 import DDR_Randomizer from "@/components/DDR_Randomizer";
 import DDR_Stats from "../components/DDR_Stats";
 
 export default function Home() {
-  const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-
-
+    
 
   return (
     <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
    
-      // * MAIN START
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-                  
+
+
         <div className="w-full h-auto">
           <DDR_Stats svgWidth={1000} svgHeight={600} />
         </div>
@@ -40,7 +35,6 @@ export default function Home() {
   
       </main>
 
-      // * MAIN END
 
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
         <a

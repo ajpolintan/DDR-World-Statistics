@@ -62,7 +62,7 @@ export default function DDR_Randomizer({ svgWidth, svgHeight }: D3Props) {
 
   return (
     <div className='flex-col'>
-      <button className="bg-teal-900 transition-all ease-in-out hover:bg-teal-950 rounded-3xl p-4 text-white mb-8" onClick={handleClick}> Randomly Generate a Set of Songs </button>
+      <button className="relative inline-flex items-center justify-center p-4 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800" onClick={handleClick}> Randomly Generate a Set of Songs </button>
         <p>{songOne}</p>
         <p>{songTwo}</p>
         <p>{songThree}</p>
