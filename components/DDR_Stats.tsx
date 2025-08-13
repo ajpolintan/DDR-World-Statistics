@@ -152,6 +152,8 @@ export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
       
           chart
             .selectAll('.bar')
+            .data(sorted_crossovers)
+
             .on("mouseover", function(event, d) {
                   //Create tooltip
                   tooltip.style("opacity",1)
