@@ -10,15 +10,28 @@ interface D3Props {
 
 interface DDR_SONG {
   Jumps: number,
-  Steps: number,
+  Steps: number
+  Rating: number,
+  Crossovers: number,
+  Holds: number,
   Title: string
 }
-export default function D3Example({ svgWidth, svgHeight }: D3Props) {
+export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
+
   const ref = useRef<SVGSVGElement | null>(null)
   
+  // * UseEffect Creates the Chart a it's loaded in 
   useEffect(() => {
     d3.csv<DDR_SONG>('/DDR_World.csv', d3.autoType).then((data) => {
+
+
         const sorted_jumps = data.sort((a,b) => { return d3.descending(a.Jumps,b.Jumps)}).filter(function(d,i){ return i < 10})
+        const sorted_steps = data.sort((a,b) => { return d3.descending(a.Steps,b.Steps)}).filter(function(d,i){ return i < 10})
+        const sorted_holds = data.sort((a,b) => { return d3.descending(a.Holds,b.Holds)}).filter(function(d,i){ return i < 10})
+        const sorted_crossovers = data.sort((a,b) => { return d3.descending(a.Crossovers,b.Crossovers)}).filter(function(d,i){ return i < 10})
+
+        const songs = d3.group(data, (data) => data.Rating);
+      
         console.log("TESTING")
         console.log(sorted_jumps)
         console.log(sorted_jumps[0].Jumps)
@@ -33,7 +46,7 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
             top: 20,
             right: 50,
             bottom: 50,
-            left: 40,
+            left: 220,
         };
         
         const width = svgWidth - margin.left - margin.right;
@@ -46,19 +59,18 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
           );
 
           const xScale = d3
-            .scaleBand()
-            .domain(sorted_jumps.map((d) => d.Title))
+            .scaleLinear()
+            .domain([0, d3.max(sorted_crossovers, (d) => d.Jumps)!])
             .range([0, width])
-            .padding(0.1);
 
           const yScale = d3
-                .scaleLinear()
-                .domain([0, d3.max(sorted_jumps, (d) => d.Jumps)!])
-                .nice()
-                .range([height, 0]);
+                .scaleBand()
+                .range([0, height])
+                .domain(sorted_crossovers.map((d) => d.Title))
+                .padding(.1);
 
 
-          //Create tooltip: Referenced from D3-Graph Gallery
+          // * Created Tooltips
           let tooltip: d3.Selection<HTMLDivElement, unknown, HTMLElement, unknown> = d3.select("#tooltip");
           if (tooltip.empty()) {
               tooltip = d3.select("body")
@@ -76,11 +88,11 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
           }
 
           chart
-                .append('g')
-                .attr('class', 'axis axis-x')
-                .attr('transform', `translate(0, ${height})`)
-                .call(d3.axisBottom(xScale))
-                .call((g) =>
+              .append('g')
+              .attr('class', 'axis axis-x')
+              .attr('transform', `translate(0, ${height})`)
+              .call(d3.axisBottom(xScale))
+              .call((g) =>
                   g
                     .select('.tick:last-of-type text')
                     .clone()
@@ -107,14 +119,14 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
                 
           chart
             .selectAll('.bar')
-            .data(sorted_jumps)
+            .data(sorted_crossovers)
             .enter()
             .append('rect')
             .attr('class', 'bar')
-            .attr('x', (d) => xScale(d.Title)!)
-            .attr('y', (d) => yScale(d.Jumps))
-            .attr('width', xScale.bandwidth())
-            .attr('height', (d) => height - yScale(d.Jumps))
+            .attr('x', (d) => xScale(0))
+            .attr('y', (d) => yScale(d.Title)!)
+            .attr('width', (d) => xScale(d.Crossovers)!)
+            .attr('height', yScale.bandwidth())
             .attr('fill', 'steelblue')
             .on("mouseover", function(event, d) {
               //Create tooltip
@@ -123,10 +135,10 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
                   .style("left", (event.pageX + 200) + "px")
                   .style("top",  (event.pageY) + "px")
                   .html("<p> Jumps: " + d.Jumps  + "<br>Title: " + d.Title + "</p>" )
+
               console.log(d.Title)
             })
             .on("mouseout", function(event, d) { 
-            
               tooltip.style("visibility", "hidden")
                   .style("stroke","none")
             })
@@ -137,5 +149,10 @@ export default function D3Example({ svgWidth, svgHeight }: D3Props) {
             
   },[])
 
-  return <svg width={svgWidth} height={svgHeight} ref={ref} />
+  return ( 
+    <div>
+      <h1> Highest Number of Jumps</h1>
+      <svg width={svgWidth} height={svgHeight} ref={ref} className='w-full h-auto'/>
+    </div>
+  )
 }
