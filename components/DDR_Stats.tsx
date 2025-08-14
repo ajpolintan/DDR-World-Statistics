@@ -2,6 +2,7 @@
 
 import { useState, useEffect, createRef, useRef} from 'react'
 import * as d3 from 'd3'
+import Image from 'next/image'
 
 interface D3Props {
   svgWidth: number
@@ -21,22 +22,33 @@ interface DDR_SONG {
 }
 export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
   const [selected, setSelected] = useState("")
+  const [image, setImage] = useState<string>("/top_songs/warning.jpg")
+  const [link, setLink] =  useState<string>("https://www.youtube.com/watch?v=tqrl4qrdDDU&list=RDtqrl4qrdDDU&start_radio=1")
+
   const ref = useRef<SVGSVGElement | null>(null)
-  
+
   // * Data Changes Depending on What is Clicked
   const handleClick = (statistic: string) => {
     switch (statistic) {
         case "Jumps":
           setSelected("Jumps")
+          setImage("/top_songs/warning.jpg")
+          setLink("https://www.youtube.com/watch?v=tqrl4qrdDDU&list=RDtqrl4qrdDDU&start_radio=1")
           break;
         case "Crossovers":
           setSelected("Crossovers")
+          setImage("/top_songs/chronmatic_burst.png")
+          setLink("https://www.youtube.com/watch?v=MEcR1WirnN8&list=RDMEcR1WirnN8&start_radio=1")
           break;
         case "Steps":
           setSelected("Steps")
+          setImage("/top_songs/max_360.jpg")
+          setLink("https://www.youtube.com/watch?v=s3-fp5Mnme4")
           break;
         case "Holds":
+          setImage("/top_songs/cheerleader.jpg")
           setSelected("Holds")
+          setLink("https://www.youtube.com/watch?v=lAjZf2aYPBQ")
           break;
         case "Max_BPM":
           setSelected("Max_BPM")
@@ -45,10 +57,14 @@ export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
           setSelected("Chart_Length")
           break;
         case "Shock_Arrows":
+          setImage("/top_songs/battle.jpg")
           setSelected("Shock_Arrows")
+          setLink("https://www.youtube.com/watch?v=ZOvAR6Z7Ka4&list=RDZOvAR6Z7Ka4&start_radio=1")
           break;
         default:
           setSelected("Jumps")
+          setImage("/top_songs/warning.jpg")
+          setLink("https://www.youtube.com/watch?v=tqrl4qrdDDU&list=RDtqrl4qrdDDU&start_radio=1")
           break;
       } 
   }
@@ -175,7 +191,7 @@ export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
                     .attr('y', 0)
                     .attr('font-weight', 'bold')
                     .attr('fill', 'steelblue')
-                    .text('DDR SONGS'),
+                    .text(''),
                 )
 
           chart
@@ -259,16 +275,28 @@ export default function DDR_Stats({ svgWidth, svgHeight }: D3Props) {
 
   return ( 
     <div>
-      <div className='flex gap-4'> 
-        <button className='text-white bg-teal-800 hover:bg-teal-950 px-5 py-2.5' onClick={() => handleClick("Jumps")}> Jumps</button>
-        <button className='text-white bg-teal-800  hover:bg-teal-950 px-5 py-2.5' onClick={() => handleClick("Crossovers")}> Crossovers</button>
-        <button className='text-white bg-teal-800  hover:bg-teal-950 px-5 py-2.5' onClick={() => handleClick("Steps")}> Steps</button>
-        <button className='text-white bg-teal-800  hover:bg-teal-950 px-5 py-2.5' onClick={() => handleClick("Holds")}> Holds</button>
-        <button className='text-white bg-teal-800  hover:bg-teal-950 px-5 py-2.5' onClick={() => handleClick("Shock_Arrows")}> Shock_Arrows </button>
-
+      <div className='mb-8 flex gap-4'> 
+        <button className='text-white bg-fuchsia-700  hover:bg-fuchsia-950 px-5 py-2.5 rounded-lg' onClick={() => handleClick("Jumps")}> Jumps</button>
+        <button className='text-white bg-fuchsia-700 hover:bg-fuchsia-950 px-5 py-2.5 rounded-lg' onClick={() => handleClick("Crossovers")}> Crossovers</button>
+        <button className='text-white bg-fuchsia-700  hover:bg-fuchsia-950 px-5 py-2.5 rounded-lg' onClick={() => handleClick("Steps")}> Steps</button>
+        <button className='text-white bg-fuchsia-700 hover:bg-fuchsia-950 px-5 py-2.5 rounded-lg' onClick={() => handleClick("Holds")}> Holds</button>
+        <button className='text-white  bg-fuchsia-700 hover:bg-fuchsia-950 px-5 py-2.5 rounded-lg' onClick={() => handleClick("Shock_Arrows")}> Shock Arrows </button>
       </div>
-      <h1> Highest Number of {selected}</h1>
+  
+      <h1 className='mb-4 text-2xl'> #1 {selected} Chart </h1>
+
+      <Image
+        src={image}
+        width={200}
+        height={200}
+        alt="Song"
+        className='mb-4'
+      />
+      <a className="text-fuchsia-400 mb-8 mt-4" target="_blank" href={link}> view chart (via yuisin on youtube) </a>
+
+      <h1 className='text-2xl'> Top 10 {selected} Charts</h1>
       <svg width={svgWidth} height={svgHeight} ref={ref} className='w-full h-auto'/>
+  
     </div>
   )
 }
